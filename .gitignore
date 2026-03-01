@@ -1,0 +1,30 @@
+# Zig build
+.zig-cache/
+
+# Data — large files, download or generate via scripts/
+data/english_words_full.txt
+data/preprocessed_icdar_data_eng_mono.csv
+data/training_data/
+data/testing_data/
+data/processed/
+data/eval_*.txt
+
+# Demo — Nuxt
+demo/node_modules/
+demo/.nuxt/
+demo/.output/
+demo/.data/
+demo/dist/
+demo/*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
